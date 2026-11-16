@@ -29,18 +29,16 @@ Knobs: drag, **Shift-drag = fine**, **double-click = default**, hover shows the 
 - CPU, one instance: Eco 4% · High 5.6% · Ultra 7.3% · Insane 9.8% of one core
 - Latency: 72 / 170 / 192 / 202 samples (reported to the host, auto compensated)
 
-## Installers
-| Platform | File | How it's made |
+## Download
+**[Latest release](https://github.com/hamkobarezz/halo-plugin/releases/latest)** — one-click installers:
+
+| Platform | Download | Then |
 |---|---|---|
-| Windows (FL Studio, Ableton…) | `dist/HALO-1.0.0-Windows-Setup.exe` | `packaging/windows/build_installer.ps1` |
-| macOS (Logic Pro AU + VST3 + app) | `dist/HALO-1.0.0-macOS.dmg` | `packaging/mac/build_dmg.sh` on a Mac, or the GitHub Actions workflow |
-| iPad (Logic Pro for iPad, AUv3) | no installer file exists on iOS | `packaging/ios/build_ipad.sh`, then Run from Xcode / TestFlight |
+| **Windows** (FL Studio, Ableton, Cubase, Reaper…) | [HALO-1.0.0-Windows-Setup.exe](https://github.com/hamkobarezz/halo-plugin/releases/latest/download/HALO-1.0.0-Windows-Setup.exe) | Run it (asks for admin). In FL: *Options → Manage plugins → Find installed plugins*. Uninstall from *Settings → Apps*. |
+| **macOS** (Logic Pro AU + VST3 + app) | [HALO-1.0.0-macOS.dmg](https://github.com/hamkobarezz/halo-plugin/releases/latest/download/HALO-1.0.0-macOS.dmg) | Open the DMG, double-click *Install HALO.pkg* (unsigned: right-click > Open). In Logic: *Audio Units → HALO Studios → HALO*. |
+| **iPad** (Logic Pro for iPad, AUv3) | no installer file exists on iOS | `packaging/ios/build_ipad.sh` on a Mac, then Run from Xcode / TestFlight |
 
-The Windows installer adds the VST3, the standalone app, a Start-menu shortcut and an entry in
-Settings > Apps (uninstall from there). It also removes the old "HB Halo" build.
-
-## Install (Windows / FL Studio)
-Run `dist\Install-VST3.bat` (asks for admin), then in FL: *Options → Manage plugins → Find installed plugins*.
+New releases are built automatically: push a tag like `v1.0.1` and GitHub builds both installers and publishes the release.
 
 ## Build
 Windows (VS 2026 Build Tools):
