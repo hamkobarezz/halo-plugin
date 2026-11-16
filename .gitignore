@@ -1,0 +1,6 @@
+JUCE/
+build*/
+dist/
+packaging/windows/payload/
+*.user
+.vs/

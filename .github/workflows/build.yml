@@ -1,0 +1,54 @@
+# Builds HALO on GitHub's machines:
+#   macOS  -> HALO-<ver>-macOS.dmg  (Logic Pro AU + VST3 + app, universal)
+#   Windows-> HALO-<ver>-Windows-Setup.exe
+#   iPad   -> AUv3 compile check (installing on an iPad needs Xcode + your Apple ID, see packaging/ios)
+# Download the results from the run page under "Artifacts".
+name: build
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+
+jobs:
+  mac:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch JUCE
+        run: git clone --depth 1 --branch 9.0.5 https://github.com/juce-framework/JUCE.git JUCE
+      - name: Build DMG
+        env:
+          HALO_APP_SIGN_ID: ${{ secrets.HALO_APP_SIGN_ID }}
+          HALO_PKG_SIGN_ID: ${{ secrets.HALO_PKG_SIGN_ID }}
+        run: |
+          chmod +x packaging/mac/build_dmg.sh
+          packaging/mac/build_dmg.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: HALO-macOS
+          path: dist/*.dmg
+
+  windows:
+    runs-on: windows-2025
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch JUCE
+        run: git clone --depth 1 --branch 9.0.5 https://github.com/juce-framework/JUCE.git JUCE
+      - name: Build installer
+        shell: pwsh
+        run: ./packaging/windows/build_installer.ps1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: HALO-Windows
+          path: dist/*-Windows-Setup.exe
+
+  ipad:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch JUCE
+        run: git clone --depth 1 --branch 9.0.5 https://github.com/juce-framework/JUCE.git JUCE
+      - name: Build AUv3 (unsigned compile check)
+        run: |
+          chmod +x packaging/ios/build_ipad.sh
+          packaging/ios/build_ipad.sh

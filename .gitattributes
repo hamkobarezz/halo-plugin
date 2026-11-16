@@ -1,0 +1,3 @@
+*.sh text eol=lf
+*.svg binary
+*.ttf binary
