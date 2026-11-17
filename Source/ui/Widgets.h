@@ -105,6 +105,18 @@ public:
     }
 
     Font getPopupMenuFont() override { return font (15.0f); }
+
+    // Draw every popup menu INSIDE the plugin window. Logic Pro (and other hosts that run
+    // Audio Units in a sandboxed helper process) don't deliver clicks to separate
+    // floating menu windows, which made the dropdowns unclickable on macOS.
+    Component* getParentComponentForMenuOptions (const PopupMenu::Options& options) override
+    {
+        if (auto* parent = options.getParentComponent()) return parent;
+        if (auto* target = options.getTargetComponent())
+            if (auto* editor = target->findParentComponentOfClass<AudioProcessorEditor>())
+                return editor;
+        return LookAndFeel_V4::getParentComponentForMenuOptions (options);
+    }
     Font getAlertWindowMessageFont() override { return font (15.0f); }
     Font getTextButtonFont (TextButton&, int h) override { return font (std::min (16.0f, (float) h * 0.6f)); }
 

@@ -153,6 +153,12 @@ private:
         w->addTextEditor ("name", proc.presets.currentName);
         w->addButton ("Save", 1, KeyPress (KeyPress::returnKey));
         w->addButton ("Cancel", 0, KeyPress (KeyPress::escapeKey));
+        // keep the dialog inside the plugin window (sandboxed AU hosts like Logic block floating windows)
+        if (auto* ed = findParentComponentOfClass<AudioProcessorEditor>())
+        {
+            ed->addAndMakeVisible (w);
+            w->setCentrePosition (ed->getLocalBounds().getCentre());
+        }
         w->enterModalState (true, ModalCallbackFunction::create ([this, w] (int res)
         {
             if (res == 1) proc.presets.saveUser (w->getTextEditorContents ("name"));
