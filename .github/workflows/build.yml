@@ -11,7 +11,7 @@ on:
 
 jobs:
   mac:
-    runs-on: macos-15
+    runs-on: macos-15-intel
     steps:
       - uses: actions/checkout@v4
       - name: Fetch JUCE
@@ -61,7 +61,7 @@ jobs:
           gh release upload "$T" out/HALO-macOS/*.dmg out/HALO-Windows/*.exe --repo "$R" --clobber
 
   ipad:
-    runs-on: macos-15
+    runs-on: macos-15-intel
     steps:
       - uses: actions/checkout@v4
       - name: Fetch JUCE
