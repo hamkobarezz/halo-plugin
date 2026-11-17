@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(HBHalo VERSION 1.1.0)
+project(HBHalo VERSION 1.1.1)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -103,7 +103,7 @@ if(WIN32 AND HALO_BUILD_INSTALLER)
         Resources/logo/halo_studios_logo.svg
         Resources/fonts/Montserrat-Medium.ttf
         Resources/fonts/Montserrat-SemiBold.ttf)
-    juce_add_gui_app(HALOSetup PRODUCT_NAME "HALO Setup" COMPANY_NAME "HALO Studios" VERSION 1.1.0)
+    juce_add_gui_app(HALOSetup PRODUCT_NAME "HALO Setup" COMPANY_NAME "HALO Studios" VERSION 1.1.1)
     target_sources(HALOSetup PRIVATE packaging/windows/Installer.cpp)
     target_compile_definitions(HALOSetup PRIVATE JUCE_WEB_BROWSER=0 JUCE_USE_CURL=0)
     target_link_libraries(HALOSetup PRIVATE HaloSetupPayload juce::juce_gui_extra PUBLIC juce::juce_recommended_config_flags)
