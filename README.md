@@ -16,7 +16,7 @@ VST3 (FL Studio, Ableton, Cubase, Reaper, Studio One …) · AU (Logic Pro, buil
 | **Master** | Tilt EQ, stereo width, bass mono, glue bus compressor, loudness drive into an oversampled look-ahead brickwall limiter (ceiling, release), LUFS gauge |
 
 Global: Input / Output / Dry-Wet, Bypass (click-free), **Quality** Eco 1x / High 2x / Ultra 4x / Insane 8x oversampling,
-70 factory presets (Vocals / Phone / Radio / Space / Singers / Artists / Mix / Master) + user presets (`Documents\HALO Studios\HALO\Presets`), A/B compare, undo/redo,
+70 full-chain presets + 40 department presets (Vocals / Phone / Radio / Space / Singers / Artists / Mix / Master) + user presets (`Documents\HALO Studios\HALO\Presets`), A/B compare, undo/redo,
 spectrum analyser (in vs out), level meters, gain reduction (comp/glue/limit), EBU R128 loudness (momentary, short-term, integrated, peak).
 Resizable window (drag the corner), size is remembered.
 
@@ -34,8 +34,8 @@ Knobs: drag, **Shift-drag = fine**, **double-click = default**, hover shows the 
 
 | Platform | Download | Then |
 |---|---|---|
-| **Windows** (FL Studio, Ableton, Cubase, Reaper…) | [HALO-1.0.0-Windows-Setup.exe](https://github.com/hamkobarezz/halo-plugin/releases/latest/download/HALO-1.0.0-Windows-Setup.exe) | Run it (asks for admin). In FL: *Options → Manage plugins → Find installed plugins*. Uninstall from *Settings → Apps*. |
-| **macOS** (Logic Pro AU + VST3 + app) | [HALO-1.0.0-macOS.dmg](https://github.com/hamkobarezz/halo-plugin/releases/latest/download/HALO-1.0.0-macOS.dmg) | Open the DMG, double-click *Install HALO.pkg* (unsigned: right-click > Open). In Logic: *Audio Units → HALO Studios → HALO*. |
+| **Windows** (FL Studio, Ableton, Cubase, Reaper…) | [HALO-1.1.0-Windows-Setup.exe](https://github.com/hamkobarezz/halo-plugin/releases/latest/download/HALO-1.1.0-Windows-Setup.exe) | Run it (asks for admin). In FL: *Options → Manage plugins → Find installed plugins*. Uninstall from *Settings → Apps*. |
+| **macOS** (Logic Pro AU + VST3 + app) | [HALO-1.1.0-macOS.dmg](https://github.com/hamkobarezz/halo-plugin/releases/latest/download/HALO-1.1.0-macOS.dmg) | Open the DMG, double-click *Install HALO.pkg* (unsigned: right-click > Open). In Logic: *Audio Units → HALO Studios → HALO*. |
 | **iPad** (Logic Pro for iPad, AUv3) | no installer file exists on iOS | `packaging/ios/build_ipad.sh` on a Mac, then Run from Xcode / TestFlight |
 
 New releases are built automatically: push a tag like `v1.0.1` and GitHub builds both installers and publishes the release.

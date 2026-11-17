@@ -8,7 +8,7 @@ using namespace juce;
 namespace
 {
 const Colour bg (0xff0b0b0d), panel (0xff141414), border (0xff2a2a2a), text (0xffe9e7e2), label (0xffa7a49e), accent (0xffff5a1f);
-const String version = "1.0.0";
+const String version = "1.1.0";
 const String regKey = "HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\HALO\\";
 
 Typeface::Ptr tf (const char* data, int size) { return Typeface::createSystemTypefaceFor (data, (size_t) size); }

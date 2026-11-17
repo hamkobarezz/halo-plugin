@@ -13,7 +13,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/../.."
 ROOT="$(pwd)"
-VERSION="1.0.0"
+VERSION="1.1.0"
 BUILD="$ROOT/build-mac"
 ART="$BUILD/HBHalo_artefacts/Release"
 WORK="$BUILD/package"

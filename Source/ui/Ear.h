@@ -410,8 +410,8 @@ public:
         // footer readouts
         g.setFont (fontLabel (8.5f).withExtraKerningFactor (0.2f));
         g.setColour (col::dim.withAlpha (hudA));
-        g.drawText ("7 MODULES  /  70 PRESETS", Rectangle<float> (bar.getX(), ry + 14.0f, bw, 12.0f), Justification::centredLeft, false);
-        g.drawText ("v1.0", Rectangle<float> (bar.getX(), ry + 14.0f, bw, 12.0f), Justification::centredRight, false);
+        g.drawText ("5 DEPARTMENTS  /  110 PRESETS", Rectangle<float> (bar.getX(), ry + 14.0f, bw, 12.0f), Justification::centredLeft, false);
+        g.drawText ("v1.1", Rectangle<float> (bar.getX(), ry + 14.0f, bw, 12.0f), Justification::centredRight, false);
     }
 
 private:
