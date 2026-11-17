@@ -153,6 +153,11 @@ inline juce::AudioProcessorValueTreeState::ParameterLayout createLayout()
     db ("mst_loud", "Loudness", 0, 24, 0);
     db ("mst_ceiling", "Ceiling", -12, 0, -0.5f);
     ms ("mst_release", "Release", 1, 1000, 80, true);
+    onoff ("mst_auto", "Auto Loudness", false);
+    layout.add (std::make_unique<AudioParameterFloat> (ParameterID { "mst_target", 1 }, "Target Loudness", NormalisableRange<float> (-30, -4, 0.1f), -14.0f,
+        AudioParameterFloatAttributes().withLabel ("LUFS").withStringFromValueFunction ([] (float v, int) { return String (v, 1) + " LUFS"; })));
+    layout.add (std::make_unique<AudioParameterFloat> (ParameterID { "mst_tol", 1 }, "Loudness Tolerance", NormalisableRange<float> (0.1f, 3.0f, 0.1f), 0.5f,
+        AudioParameterFloatAttributes().withLabel ("LU").withStringFromValueFunction ([] (float v, int) { return "+/-" + String (v, 1) + " LU"; })));
 
     return layout;
 }

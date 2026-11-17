@@ -99,7 +99,10 @@ void HaloProcessor::updateModules()
     comp.set (pv ("comp_input"), pv ("comp_amount") * 0.01f, (int) pv ("comp_style"), pv ("comp_speed") * 0.01f,
               pv ("comp_output"), pb ("comp_auto"), pv ("comp_mix") * 0.01f, pv ("comp_hpf"));
 
-    enh.set (pv ("enh_deess") * 0.01f, pv ("enh_deess_freq"), pv ("enh_denoise") * 0.01f, pv ("enh_air") * 0.01f, pv ("enh_body") * 0.01f);
+    // de-ess / de-noise belong to the DYNAMICS department, body / air to TONE
+    const float dynOn = pb ("comp_on") ? 1.0f : 0.0f, toneOn = pb ("eq_on") ? 1.0f : 0.0f;
+    enh.set (pv ("enh_deess") * 0.01f * dynOn, pv ("enh_deess_freq"), pv ("enh_denoise") * 0.01f * dynOn,
+             pv ("enh_air") * 0.01f * toneOn, pv ("enh_body") * 0.01f * toneOn);
 
     Equalizer::Params e;
     e.hpf = pv ("eq_hpf"); e.lpf = pv ("eq_lpf");
@@ -121,8 +124,32 @@ void HaloProcessor::updateModules()
 
     sat.set (pb ("sat_on"), (int) pv ("sat_type"), pv ("sat_drive") * 0.01f, pv ("sat_mix") * 0.01f, pv ("sat_gain"), pb ("sat_clip"));
 
+    autoOn = pb ("mst_auto") && pb ("mst_on");
+    autoTarget = pv ("mst_target");
+    autoTol = pv ("mst_tol");
     master.set (pb ("mst_on"), pv ("mst_tilt"), pv ("mst_width") * 0.01f, pv ("mst_mono"), pv ("mst_glue") * 0.01f,
-                pv ("mst_loud"), pv ("mst_ceiling"), pv ("mst_release"));
+                pv ("mst_loud") + autoGainDb, pv ("mst_ceiling"), pv ("mst_release"));
+}
+
+// Auto loudness: rides the limiter drive so the short-term loudness settles on the typed
+// target, but only corrects while it is outside the +/- tolerance window ("room for leakage"),
+// so normal musical movement inside the window is left alone. Runs every 100 ms meter update.
+void HaloProcessor::updateAutoLoudness (int n)
+{
+    const double fs = currentFs.load();
+    const float dt = (float) (n / fs);
+    if (! autoOn) { autoGainDb += (0.0f - autoGainDb) * std::min (1.0f, dt * 2.0f); }
+    else if (loud.shortTerm > -50.0f)
+    {
+        const float err = autoTarget - loud.shortTerm;
+        if (std::abs (err) > autoTol)
+        {
+            const float excess = err > 0 ? err - autoTol * 0.5f : err + autoTol * 0.5f;
+            autoGainDb += excess * std::min (1.0f, dt * 0.8f);
+        }
+        autoGainDb = std::clamp (autoGainDb, -12.0f, 24.0f);
+    }
+    meters.autoGain = autoGainDb;
 }
 
 template <typename Fn>
@@ -200,6 +227,7 @@ void HaloProcessor::processChunk (float* l, float* r, int n)
 
     if (meters.resetLoudness.exchange (false)) loud.reset();
     loud.process (l, r, n);
+    updateAutoLoudness (n);
     meters.lufsM = loud.momentary; meters.lufsS = loud.shortTerm; meters.lufsI = loud.integrated;
     atomicMax (meters.peak, std::max (oL, oR));
 

@@ -1,12 +1,11 @@
 #pragma once
 #include "PluginProcessor.h"
-#include "ui/Panels.h"
-#include "ui/Ear.h"
+#include "ui/Departments.h"
 
 namespace halo
 {
 class TopBar;
-class MeterView;
+class FooterBar;
 
 class HaloEditor : public juce::AudioProcessorEditor
 {
@@ -29,19 +28,20 @@ private:
     struct Content : juce::Component
     {
         void paint (juce::Graphics&) override;
-        float t = 0;
         juce::Array<juce::Line<float>> dividers;
     } content;
 
     std::unique_ptr<TopBar> top;
-    std::vector<std::unique_ptr<ui::ModulePanel>> panels;
-    std::unique_ptr<ui::SpectrumView> spectrum;
-    std::unique_ptr<MeterView> meters;
+    std::unique_ptr<FooterBar> footer;
+    std::vector<std::unique_ptr<ui::DeptCard>> cards;
+    std::vector<std::unique_ptr<ui::DetailPanel>> details;
     std::unique_ptr<ui::EarView> ear;
     std::unique_ptr<ui::SplashScreen> splash;
     juce::TooltipWindow tooltips { this, 600 };
     std::unique_ptr<juce::VBlankAttachment> vblank;
     double lastTime = 0;
+    float toneSmooth[7] {};
+    float detailAlpha[5] { 1, 1, 1, 1, 1 };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HaloEditor)
 };

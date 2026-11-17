@@ -183,6 +183,24 @@ int main()
         std::printf ("Feedback stress: peak %.2f dBFS  %s\n", juce::Decibels::gainToDecibels (pk), ok ? "OK" : "FAIL");
     }
 
+    // ---- 6. typed loudness target: auto gain must settle inside the tolerance window, limit must hold ----
+    for (float target : { -14.0f, -9.0f })
+    {
+        HaloProcessor p;
+        p.presets.initDefaults();
+        setP (p, "mst_auto", 1); setP (p, "mst_target", target); setP (p, "mst_tol", 0.5f); setP (p, "mst_ceiling", -1);
+        p.prepareToPlay (fs, block);
+        juce::AudioBuffer<float> out;
+        double cpu;
+        for (int pass = 0; pass < 4; ++pass) render (p, out, cpu);
+        const float st = p.meters.lufsS.load();
+        const float pk = juce::Decibels::gainToDecibels (out.getMagnitude (0, total));
+        const bool ok = std::abs (st - target) < 1.5f && pk <= -0.999f;
+        if (! ok) ++failures;
+        std::printf ("Auto loudness target %.1f: short-term %.2f LUFS, auto gain %+.1f dB, peak %.3f dBFS  %s\n",
+                     target, st, p.meters.autoGain.load(), pk, ok ? "OK" : "FAIL");
+    }
+
     std::cout << "\n" << (failures == 0 ? "ALL TESTS PASSED" : juce::String (failures) + " FAILURES") << "\n";
     return failures == 0 ? 0 : 1;
 }

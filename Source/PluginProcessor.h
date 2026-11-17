@@ -16,9 +16,9 @@ struct Meters
 {
     std::atomic<float> inL { 0 }, inR { 0 }, outL { 0 }, outR { 0 };
     std::atomic<float> compGr { 0 }, essGr { 0 }, noiseGr { 0 }, eqAct { 0 }, mulAct { 0 }, revAct { 0 }, dlyAct { 0 },
-                       satAct { 0 }, glueGr { 0 }, limGr { 0 }, lufsM { -70 }, lufsS { -70 }, lufsI { -70 }, peak { 0 };
+                       satAct { 0 }, glueGr { 0 }, limGr { 0 }, autoGain { 0 }, lufsM { -70 }, lufsS { -70 }, lufsI { -70 }, peak { 0 };
     std::atomic<bool> resetLoudness { false };
-    float uiLim = 0, uiOut = 0; // message-thread copy of limGr, refreshed once per UI frame
+    float uiLim = 0, uiOut = 0, uiComp = 0; // message-thread copy of limGr, refreshed once per UI frame
 };
 
 class HaloProcessor : public juce::AudioProcessor, private juce::Timer
@@ -70,6 +70,7 @@ private:
     float pv (const char* id) const { return params.at (id)->load (std::memory_order_relaxed); }
     bool pb (const char* id) const { return pv (id) > 0.5f; }
     void updateModules();
+    void updateAutoLoudness (int n);
     void processChunk (float* l, float* r, int n);
     int latencyFor (int q) const;
 
@@ -100,6 +101,8 @@ private:
     int quality = -1;
     std::atomic<int> latencyNow { 0 };
     double bpm = 120.0;
+    bool autoOn = false;
+    float autoTarget = -14.0f, autoTol = 0.5f, autoGainDb = 0.0f;
     float peakHold[4] {};
 
     juce::ValueTree slots[2];

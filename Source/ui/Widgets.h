@@ -148,6 +148,45 @@ public:
         g.strokePath (ptr, PathStrokeType (stroke * 0.9f, PathStrokeType::curved, PathStrokeType::rounded));
     }
 
+    // Flat fader: thin track, orange fill (from centre when bipolar), small rounded cap
+    void drawLinearSlider (Graphics& g, int x, int y, int w, int h, float pos, float, float, Slider::SliderStyle style, Slider& s) override
+    {
+        const auto c = s.findColour (Slider::rotarySliderFillColourId);
+        const bool vert = style == Slider::LinearVertical;
+        const bool bip = (bool) s.getProperties().getWithDefault ("bipolar", false);
+        const bool hot = s.isMouseOverOrDragging();
+        const auto b = Rectangle<float> ((float) x, (float) y, (float) w, (float) h);
+        if (vert)
+        {
+            const float cx = b.getCentreX();
+            const float top = b.getY() + 6.0f, bot = b.getBottom() - 6.0f;
+            g.setColour (Colour (0xff2a2a2a));
+            g.fillRoundedRectangle (cx - 1.5f, top, 3.0f, bot - top, 1.5f);
+            const float from = bip ? (top + bot) * 0.5f : bot;
+            g.setColour (c);
+            g.fillRoundedRectangle (cx - 1.5f, std::min (from, pos), 3.0f, std::abs (from - pos), 1.5f);
+            if (bip) { g.setColour (Colour (0xff3a3a3a)); g.fillRect (cx - 7.0f, (top + bot) * 0.5f - 0.5f, 14.0f, 1.0f); }
+            auto cap = Rectangle<float> (cx - 11.0f, pos - 5.0f, 22.0f, 10.0f);
+            g.setColour (hot ? Colour (0xff232323) : Colour (0xff181818));
+            g.fillRoundedRectangle (cap, 3.0f);
+            g.setColour (c);
+            g.drawRoundedRectangle (cap, 3.0f, 1.3f);
+            g.fillRect (cap.getCentreX() - 5.0f, cap.getCentreY() - 0.75f, 10.0f, 1.5f);
+        }
+        else
+        {
+            const float cy = b.getCentreY();
+            const float l = b.getX() + 6.0f, r = b.getRight() - 6.0f;
+            g.setColour (Colour (0xff2a2a2a));
+            g.fillRoundedRectangle (l, cy - 1.5f, r - l, 3.0f, 1.5f);
+            const float from = bip ? (l + r) * 0.5f : l;
+            g.setColour (c);
+            g.fillRoundedRectangle (std::min (from, pos), cy - 1.5f, std::abs (from - pos), 3.0f, 1.5f);
+            g.setColour (hot ? col::cream : c);
+            g.fillEllipse (pos - 6.0f, cy - 6.0f, 12.0f, 12.0f);
+        }
+    }
+
     void drawPopupMenuBackground (Graphics& g, int w, int h) override
     {
         g.fillAll (col::panel);
@@ -363,14 +402,18 @@ class GlyphButton : public Button
 public:
     GlyphButton (const String& t, Colour c = col::accent) : Button (t), colour (c) {}
     bool selected = false;
+    void setPaintFrame (bool f) { frame = f; }
     void paintButton (Graphics& g, bool over, bool down) override
     {
         auto b = getLocalBounds().toFloat().reduced (0.5f);
-        g.setColour (selected ? colour.withAlpha (0.10f) : (down ? Colour (0xff1a1a1a) : over ? col::panelHi : col::panel));
-        g.fillRoundedRectangle (b, 3.0f);
-        g.setColour (selected ? colour : (over ? Colour (0xff444444) : col::border));
-        g.drawRoundedRectangle (b, 3.0f, 1.0f);
-        const Colour fg = selected ? colour : (over ? col::text : col::text.withAlpha (0.85f));
+        if (frame)
+        {
+            g.setColour (selected ? colour.withAlpha (0.10f) : (down ? Colour (0xff1a1a1a) : over ? col::panelHi : col::panel));
+            g.fillRoundedRectangle (b, 3.0f);
+            g.setColour (selected ? colour : (over ? Colour (0xff444444) : col::border));
+            g.drawRoundedRectangle (b, 3.0f, 1.0f);
+        }
+        const Colour fg = selected ? colour : (over ? (frame ? col::text : colour) : (frame ? col::text.withAlpha (0.85f) : col::dim));
         if (drawGlyph) { drawGlyph (g, b, fg); return; }
         g.setFont (fontLabel (std::min (11.0f, b.getHeight() * 0.42f)));
         g.setColour (fg);
@@ -379,6 +422,7 @@ public:
     std::function<void (Graphics&, Rectangle<float>, Colour)> drawGlyph;
 
 private:
+    bool frame = true;
     Colour colour;
 };
 
